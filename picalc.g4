@@ -23,7 +23,7 @@ pat
         :   ID otype
         |   '[' (label pat)+ ']'
         |   '_' otype
-        |   ID otype '@' pat                    //Destroy it
+        //|   ID otype '@' pat                    //Destroy it
         ;
 
 otype

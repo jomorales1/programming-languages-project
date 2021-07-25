@@ -2,6 +2,8 @@ import org.antlr.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.IOException;
+import gen.picalcLexer;
+import gen.picalcParser;
 import static  org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Launch {
@@ -9,15 +11,16 @@ public class Launch {
         try {
             String source = "test.txt";
             CharStream cs = fromFileName(source);
-            gLexer lexer = new gLexer(cs);
+            picalcLexer lexer = new picalcLexer(cs);
             CommonTokenStream token = new CommonTokenStream(lexer);
-            gParser parser = new gParser(token);
+            picalcParser parser = new picalcParser(token);
 
             // run any rule
-            // ParseTree tree = parser.prule();
+            //ParseTree tree = parser.program();
+            picalcParser.ProgramContext tree = parser.program();
 
-            MyVisitor visitor = new MyVisitor();
-            // visitor.visit(tree);
+            Visitors visitor = new Visitors();
+            visitor.visit(tree);
         }
         catch (IOException e) {
             e.printStackTrace();

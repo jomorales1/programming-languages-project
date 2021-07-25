@@ -1,4 +1,4 @@
-// Generated from D:/MEGAsync/UNAL/12vo Semestre/Lenguajes de programacion/ANTLR JAVA\picalc.g4 by ANTLR 4.9.1
+package gen;// Generated from D:/MEGAsync/UNAL/12vo Semestre/Lenguajes de programacion/ANTLR JAVA\picalc.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
