@@ -1,4 +1,3 @@
-import org.antlr.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.IOException;
@@ -8,6 +7,7 @@ import static  org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Launch {
     public static void main(String[] args) {
+
         try {
             String source = "test.txt";
             CharStream cs = fromFileName(source);

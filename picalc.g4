@@ -4,59 +4,74 @@ program :
         ;
 
 proc
-        :   val '!' val                         // Output atom
-        |   val '?' abs                         // Input prefix
-        |   val '?*' abs                        // Replicated input prefix
-        |   '(' ')'                             // Empty process
-        |   '(' proc | proc ')'                 // Parallel composition
-        |   '(' dec proc ')'                    // Local declaration
+        :   val OUTPUT val                         // Output atom
+        |   val INPUT abs                         // Input prefix
+        |   val RINPUT abs                        // Replicated input prefix
+        |   OP CP                             // Empty process
+        |   OP proc PC proc CP                 // Parallel composition
+        |   OP dec proc CP                    // Local declaration
         |   'if' val 'then' proc 'else' proc    // Conditional
         ;
 
 dec
-        :   'new' ID ':' type
+        :   'new' ID CL type
         |   'def' ID abs ('and' ID abs)+
-        |   type ID '=' type
+        |   type ID EQ type
         ;
 
 pat
         :   ID otype
-        |   '[' (label pat)+ ']'
-        |   '_' otype
-        //|   ID otype '@' pat                    //Destroy it
+        |   OSB (label pat)+ CSB
+        |   US otype
+        //   ID otype '@' pat                    //Destroy it
         ;
 
 otype
-        :   '[' (':' type)? ']'
+        :   (CL type)?
         ;
 
 type
-        :   '^' type
-        |   '[' (label type)+ ']'
+        :   PW type
+        |   OSB (label type )* CSB
         |   ('Boolean' | 'Char' | 'Int' | 'String')
         ;
 
 abs
-        :   pat '=' proc
+        :   pat EQ proc
         ;
 
 val
         :   path
-        |   '[' (label val)+ ']'
+        |   OSB (label val)+ CSB
         |   (BOOL | CHAR | INT | STRING)
         ;
 
 path
-        :   ID '{' ('.' ID)* '}'
+        :   ID OB (DOT ID)* CB
         ;
 
 label
-        :   '[' (ID '=')? ']'
+        :   (ID EQ)?
         ;
 
+OP : '(';
+CP : ')';
+OB: '{';
+CB: '}';
+OSB: '[';
+CSB: ']';
+EQ: '=';
+DOT: '.';
+PW: '^';
+CL: ':';
+US: '_';
+PC: '|';
+OUTPUT: '!';
+INPUT: '?';
+RINPUT: '?*';
 BOOL : ('True' | 'False');
-CHAR : [a-zA-Z];
+CHAR : '\''[a-zA-Z0-9_]'\'';                //fix
 INT : [0-9]+;
 STRING: '"'[a-zA-Z0-9 ]*'"';
-ID : CHAR+;
+ID : [a-zA-Z][a-zA-Z0-9_]*;
 WS : [ \t\r\n]+ -> skip ;
