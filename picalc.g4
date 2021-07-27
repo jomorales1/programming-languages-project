@@ -4,19 +4,19 @@ program :
         ;
 
 proc
-        :   val OUTPUT val                         // Output atom
-        |   val INPUT abs                         // Input prefix
-        |   val RINPUT abs                        // Replicated input prefix
-        |   OP CP                             // Empty process
-        |   OP proc PC proc CP                 // Parallel composition
-        |   OP dec proc CP                    // Local declaration
-        |   'if' val 'then' proc 'else' proc    // Conditional
+        :   val OUTPUT val                          // Output atom
+        |   val INPUT abs                           // Input prefix
+        |   val RINPUT abs                          // Replicated input prefix
+        |   OP CP                                   // Empty process
+        |   OP proc PC proc CP                      // Parallel composition
+        |   OP dec proc CP                          // Local declaration
+        |   'if' val 'then' proc 'else' proc        // Conditional
         ;
 
 dec
         :   'new' ID CL type
         |   'def' ID abs ('and' ID abs)+
-        |   type ID EQ type
+        |   'type' ID EQ type
         ;
 
 pat

@@ -1,1 +1,2 @@
-run(new a:[[] Boolean [] Char] () )
+run (c!a | c?x=print!"done!")
+(new c:ˆ[](c!a | c?x))

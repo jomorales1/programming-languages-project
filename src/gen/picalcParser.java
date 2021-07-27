@@ -1,4 +1,4 @@
-// Generated from D:/MEGAsync/UNAL/12vo Semestre/Lenguajes de programacion/ANTLR JAVA\picalc.g4 by ANTLR 4.9.1
+// Generated from C:/Users/JORGE AURELIO MORALE/Documents/Personal Projects/programming-languages-project\picalc.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -17,9 +17,9 @@ public class picalcParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, OP=12, CP=13, OB=14, CB=15, OSB=16, CSB=17, EQ=18, 
-		DOT=19, PW=20, CL=21, US=22, PC=23, OUTPUT=24, INPUT=25, RINPUT=26, BOOL=27, 
-		CHAR=28, INT=29, STRING=30, ID=31, WS=32;
+		T__9=10, T__10=11, T__11=12, OP=13, CP=14, OB=15, CB=16, OSB=17, CSB=18, 
+		EQ=19, DOT=20, PW=21, CL=22, US=23, PC=24, OUTPUT=25, INPUT=26, RINPUT=27, 
+		BOOL=28, CHAR=29, INT=30, STRING=31, ID=32, WS=33;
 	public static final int
 		RULE_program = 0, RULE_proc = 1, RULE_dec = 2, RULE_pat = 3, RULE_otype = 4, 
 		RULE_type = 5, RULE_abs = 6, RULE_val = 7, RULE_path = 8, RULE_label = 9;
@@ -34,18 +34,18 @@ public class picalcParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'run'", "'if'", "'then'", "'else'", "'new'", "'def'", "'and'", 
-			"'Boolean'", "'Char'", "'Int'", "'String'", "'('", "')'", "'{'", "'}'", 
-			"'['", "']'", "'='", "'.'", "'^'", "':'", "'_'", "'|'", "'!'", "'?'", 
-			"'?*'"
+			"'type'", "'Boolean'", "'Char'", "'Int'", "'String'", "'('", "')'", "'{'", 
+			"'}'", "'['", "']'", "'='", "'.'", "'^'", "':'", "'_'", "'|'", "'!'", 
+			"'?'", "'?*'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			"OP", "CP", "OB", "CB", "OSB", "CSB", "EQ", "DOT", "PW", "CL", "US", 
-			"PC", "OUTPUT", "INPUT", "RINPUT", "BOOL", "CHAR", "INT", "STRING", "ID", 
-			"WS"
+			null, "OP", "CP", "OB", "CB", "OSB", "CSB", "EQ", "DOT", "PW", "CL", 
+			"US", "PC", "OUTPUT", "INPUT", "RINPUT", "BOOL", "CHAR", "INT", "STRING", 
+			"ID", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -302,11 +302,8 @@ public class picalcParser extends Parser {
 			return getToken(picalcParser.ID, i);
 		}
 		public TerminalNode CL() { return getToken(picalcParser.CL, 0); }
-		public List<TypeContext> type() {
-			return getRuleContexts(TypeContext.class);
-		}
-		public TypeContext type(int i) {
-			return getRuleContext(TypeContext.class,i);
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
 		}
 		public List<AbsContext> abs() {
 			return getRuleContexts(AbsContext.class);
@@ -339,7 +336,7 @@ public class picalcParser extends Parser {
 		enterRule(_localctx, 4, RULE_dec);
 		int _la;
 		try {
-			setState(76);
+			setState(75);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__4:
@@ -385,15 +382,10 @@ public class picalcParser extends Parser {
 				}
 				break;
 			case T__7:
-			case T__8:
-			case T__9:
-			case T__10:
-			case OSB:
-			case PW:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(71);
-				type();
+				match(T__7);
 				setState(72);
 				match(ID);
 				setState(73);
@@ -461,49 +453,49 @@ public class picalcParser extends Parser {
 		enterRule(_localctx, 6, RULE_pat);
 		int _la;
 		try {
-			setState(92);
+			setState(91);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(78);
+				setState(77);
 				match(ID);
-				setState(79);
+				setState(78);
 				otype();
 				}
 				break;
 			case OSB:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(80);
+				setState(79);
 				match(OSB);
-				setState(84); 
+				setState(83); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				do {
 					{
 					{
-					setState(81);
+					setState(80);
 					label();
-					setState(82);
+					setState(81);
 					pat();
 					}
 					}
-					setState(86); 
+					setState(85); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << OSB) | (1L << US) | (1L << ID))) != 0) );
-				setState(88);
+				setState(87);
 				match(CSB);
 				}
 				break;
 			case US:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(90);
+				setState(89);
 				match(US);
-				setState(91);
+				setState(90);
 				otype();
 				}
 				break;
@@ -553,14 +545,14 @@ public class picalcParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(96);
+			setState(95);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==CL) {
 				{
-				setState(94);
+				setState(93);
 				match(CL);
-				setState(95);
+				setState(94);
 				type();
 				}
 			}
@@ -618,52 +610,52 @@ public class picalcParser extends Parser {
 		enterRule(_localctx, 10, RULE_type);
 		int _la;
 		try {
-			setState(111);
+			setState(110);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case PW:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(98);
+				setState(97);
 				match(PW);
-				setState(99);
+				setState(98);
 				type();
 				}
 				break;
 			case OSB:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(100);
+				setState(99);
 				match(OSB);
-				setState(106);
+				setState(105);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__7) | (1L << T__8) | (1L << T__9) | (1L << T__10) | (1L << OSB) | (1L << PW) | (1L << ID))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__8) | (1L << T__9) | (1L << T__10) | (1L << T__11) | (1L << OSB) | (1L << PW) | (1L << ID))) != 0)) {
 					{
 					{
-					setState(101);
+					setState(100);
 					label();
-					setState(102);
+					setState(101);
 					type();
 					}
 					}
-					setState(108);
+					setState(107);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(109);
+				setState(108);
 				match(CSB);
 				}
 				break;
-			case T__7:
 			case T__8:
 			case T__9:
 			case T__10:
+			case T__11:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(110);
+				setState(109);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__7) | (1L << T__8) | (1L << T__9) | (1L << T__10))) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__8) | (1L << T__9) | (1L << T__10) | (1L << T__11))) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				else {
@@ -721,11 +713,11 @@ public class picalcParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(113);
+			setState(112);
 			pat();
-			setState(114);
+			setState(113);
 			match(EQ);
-			setState(115);
+			setState(114);
 			proc();
 			}
 		}
@@ -786,38 +778,38 @@ public class picalcParser extends Parser {
 		enterRule(_localctx, 14, RULE_val);
 		int _la;
 		try {
-			setState(129);
+			setState(128);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(117);
+				setState(116);
 				path();
 				}
 				break;
 			case OSB:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(118);
+				setState(117);
 				match(OSB);
-				setState(122); 
+				setState(121); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				do {
 					{
 					{
-					setState(119);
+					setState(118);
 					label();
-					setState(120);
+					setState(119);
 					val();
 					}
 					}
-					setState(124); 
+					setState(123); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << OSB) | (1L << BOOL) | (1L << CHAR) | (1L << INT) | (1L << STRING) | (1L << ID))) != 0) );
-				setState(126);
+				setState(125);
 				match(CSB);
 				}
 				break;
@@ -827,7 +819,7 @@ public class picalcParser extends Parser {
 			case STRING:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(128);
+				setState(127);
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOL) | (1L << CHAR) | (1L << INT) | (1L << STRING))) != 0)) ) {
 				_errHandler.recoverInline(this);
@@ -891,27 +883,27 @@ public class picalcParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(131);
+			setState(130);
 			match(ID);
-			setState(132);
+			setState(131);
 			match(OB);
-			setState(137);
+			setState(136);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==DOT) {
 				{
 				{
-				setState(133);
+				setState(132);
 				match(DOT);
-				setState(134);
+				setState(133);
 				match(ID);
 				}
 				}
-				setState(139);
+				setState(138);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(140);
+			setState(139);
 			match(CB);
 			}
 		}
@@ -954,14 +946,14 @@ public class picalcParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(144);
+			setState(143);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,11,_ctx) ) {
 			case 1:
 				{
-				setState(142);
+				setState(141);
 				match(ID);
-				setState(143);
+				setState(142);
 				match(EQ);
 				}
 				break;
@@ -980,46 +972,46 @@ public class picalcParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\"\u0095\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3#\u0094\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\5\3:\n\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\6\4F\n\4\r\4\16"+
-		"\4G\3\4\3\4\3\4\3\4\3\4\5\4O\n\4\3\5\3\5\3\5\3\5\3\5\3\5\6\5W\n\5\r\5"+
-		"\16\5X\3\5\3\5\3\5\3\5\5\5_\n\5\3\6\3\6\5\6c\n\6\3\7\3\7\3\7\3\7\3\7\3"+
-		"\7\7\7k\n\7\f\7\16\7n\13\7\3\7\3\7\5\7r\n\7\3\b\3\b\3\b\3\b\3\t\3\t\3"+
-		"\t\3\t\3\t\6\t}\n\t\r\t\16\t~\3\t\3\t\3\t\5\t\u0084\n\t\3\n\3\n\3\n\3"+
-		"\n\7\n\u008a\n\n\f\n\16\n\u008d\13\n\3\n\3\n\3\13\3\13\5\13\u0093\n\13"+
-		"\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\4\3\2\n\r\3\2\35 \2\u009f\2\26\3"+
-		"\2\2\2\49\3\2\2\2\6N\3\2\2\2\b^\3\2\2\2\nb\3\2\2\2\fq\3\2\2\2\16s\3\2"+
-		"\2\2\20\u0083\3\2\2\2\22\u0085\3\2\2\2\24\u0092\3\2\2\2\26\27\7\3\2\2"+
-		"\27\30\5\4\3\2\30\3\3\2\2\2\31\32\5\20\t\2\32\33\7\32\2\2\33\34\5\20\t"+
-		"\2\34:\3\2\2\2\35\36\5\20\t\2\36\37\7\33\2\2\37 \5\16\b\2 :\3\2\2\2!\""+
-		"\5\20\t\2\"#\7\34\2\2#$\5\16\b\2$:\3\2\2\2%&\7\16\2\2&:\7\17\2\2\'(\7"+
-		"\16\2\2()\5\4\3\2)*\7\31\2\2*+\5\4\3\2+,\7\17\2\2,:\3\2\2\2-.\7\16\2\2"+
-		"./\5\6\4\2/\60\5\4\3\2\60\61\7\17\2\2\61:\3\2\2\2\62\63\7\4\2\2\63\64"+
-		"\5\20\t\2\64\65\7\5\2\2\65\66\5\4\3\2\66\67\7\6\2\2\678\5\4\3\28:\3\2"+
-		"\2\29\31\3\2\2\29\35\3\2\2\29!\3\2\2\29%\3\2\2\29\'\3\2\2\29-\3\2\2\2"+
-		"9\62\3\2\2\2:\5\3\2\2\2;<\7\7\2\2<=\7!\2\2=>\7\27\2\2>O\5\f\7\2?@\7\b"+
-		"\2\2@A\7!\2\2AE\5\16\b\2BC\7\t\2\2CD\7!\2\2DF\5\16\b\2EB\3\2\2\2FG\3\2"+
-		"\2\2GE\3\2\2\2GH\3\2\2\2HO\3\2\2\2IJ\5\f\7\2JK\7!\2\2KL\7\24\2\2LM\5\f"+
-		"\7\2MO\3\2\2\2N;\3\2\2\2N?\3\2\2\2NI\3\2\2\2O\7\3\2\2\2PQ\7!\2\2Q_\5\n"+
-		"\6\2RV\7\22\2\2ST\5\24\13\2TU\5\b\5\2UW\3\2\2\2VS\3\2\2\2WX\3\2\2\2XV"+
-		"\3\2\2\2XY\3\2\2\2YZ\3\2\2\2Z[\7\23\2\2[_\3\2\2\2\\]\7\30\2\2]_\5\n\6"+
-		"\2^P\3\2\2\2^R\3\2\2\2^\\\3\2\2\2_\t\3\2\2\2`a\7\27\2\2ac\5\f\7\2b`\3"+
-		"\2\2\2bc\3\2\2\2c\13\3\2\2\2de\7\26\2\2er\5\f\7\2fl\7\22\2\2gh\5\24\13"+
-		"\2hi\5\f\7\2ik\3\2\2\2jg\3\2\2\2kn\3\2\2\2lj\3\2\2\2lm\3\2\2\2mo\3\2\2"+
-		"\2nl\3\2\2\2or\7\23\2\2pr\t\2\2\2qd\3\2\2\2qf\3\2\2\2qp\3\2\2\2r\r\3\2"+
-		"\2\2st\5\b\5\2tu\7\24\2\2uv\5\4\3\2v\17\3\2\2\2w\u0084\5\22\n\2x|\7\22"+
-		"\2\2yz\5\24\13\2z{\5\20\t\2{}\3\2\2\2|y\3\2\2\2}~\3\2\2\2~|\3\2\2\2~\177"+
-		"\3\2\2\2\177\u0080\3\2\2\2\u0080\u0081\7\23\2\2\u0081\u0084\3\2\2\2\u0082"+
-		"\u0084\t\3\2\2\u0083w\3\2\2\2\u0083x\3\2\2\2\u0083\u0082\3\2\2\2\u0084"+
-		"\21\3\2\2\2\u0085\u0086\7!\2\2\u0086\u008b\7\20\2\2\u0087\u0088\7\25\2"+
-		"\2\u0088\u008a\7!\2\2\u0089\u0087\3\2\2\2\u008a\u008d\3\2\2\2\u008b\u0089"+
-		"\3\2\2\2\u008b\u008c\3\2\2\2\u008c\u008e\3\2\2\2\u008d\u008b\3\2\2\2\u008e"+
-		"\u008f\7\21\2\2\u008f\23\3\2\2\2\u0090\u0091\7!\2\2\u0091\u0093\7\24\2"+
-		"\2\u0092\u0090\3\2\2\2\u0092\u0093\3\2\2\2\u0093\25\3\2\2\2\169GNX^bl"+
-		"q~\u0083\u008b\u0092";
+		"\4G\3\4\3\4\3\4\3\4\5\4N\n\4\3\5\3\5\3\5\3\5\3\5\3\5\6\5V\n\5\r\5\16\5"+
+		"W\3\5\3\5\3\5\3\5\5\5^\n\5\3\6\3\6\5\6b\n\6\3\7\3\7\3\7\3\7\3\7\3\7\7"+
+		"\7j\n\7\f\7\16\7m\13\7\3\7\3\7\5\7q\n\7\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3"+
+		"\t\3\t\6\t|\n\t\r\t\16\t}\3\t\3\t\3\t\5\t\u0083\n\t\3\n\3\n\3\n\3\n\7"+
+		"\n\u0089\n\n\f\n\16\n\u008c\13\n\3\n\3\n\3\13\3\13\5\13\u0092\n\13\3\13"+
+		"\2\2\f\2\4\6\b\n\f\16\20\22\24\2\4\3\2\13\16\3\2\36!\2\u009e\2\26\3\2"+
+		"\2\2\49\3\2\2\2\6M\3\2\2\2\b]\3\2\2\2\na\3\2\2\2\fp\3\2\2\2\16r\3\2\2"+
+		"\2\20\u0082\3\2\2\2\22\u0084\3\2\2\2\24\u0091\3\2\2\2\26\27\7\3\2\2\27"+
+		"\30\5\4\3\2\30\3\3\2\2\2\31\32\5\20\t\2\32\33\7\33\2\2\33\34\5\20\t\2"+
+		"\34:\3\2\2\2\35\36\5\20\t\2\36\37\7\34\2\2\37 \5\16\b\2 :\3\2\2\2!\"\5"+
+		"\20\t\2\"#\7\35\2\2#$\5\16\b\2$:\3\2\2\2%&\7\17\2\2&:\7\20\2\2\'(\7\17"+
+		"\2\2()\5\4\3\2)*\7\32\2\2*+\5\4\3\2+,\7\20\2\2,:\3\2\2\2-.\7\17\2\2./"+
+		"\5\6\4\2/\60\5\4\3\2\60\61\7\20\2\2\61:\3\2\2\2\62\63\7\4\2\2\63\64\5"+
+		"\20\t\2\64\65\7\5\2\2\65\66\5\4\3\2\66\67\7\6\2\2\678\5\4\3\28:\3\2\2"+
+		"\29\31\3\2\2\29\35\3\2\2\29!\3\2\2\29%\3\2\2\29\'\3\2\2\29-\3\2\2\29\62"+
+		"\3\2\2\2:\5\3\2\2\2;<\7\7\2\2<=\7\"\2\2=>\7\30\2\2>N\5\f\7\2?@\7\b\2\2"+
+		"@A\7\"\2\2AE\5\16\b\2BC\7\t\2\2CD\7\"\2\2DF\5\16\b\2EB\3\2\2\2FG\3\2\2"+
+		"\2GE\3\2\2\2GH\3\2\2\2HN\3\2\2\2IJ\7\n\2\2JK\7\"\2\2KL\7\25\2\2LN\5\f"+
+		"\7\2M;\3\2\2\2M?\3\2\2\2MI\3\2\2\2N\7\3\2\2\2OP\7\"\2\2P^\5\n\6\2QU\7"+
+		"\23\2\2RS\5\24\13\2ST\5\b\5\2TV\3\2\2\2UR\3\2\2\2VW\3\2\2\2WU\3\2\2\2"+
+		"WX\3\2\2\2XY\3\2\2\2YZ\7\24\2\2Z^\3\2\2\2[\\\7\31\2\2\\^\5\n\6\2]O\3\2"+
+		"\2\2]Q\3\2\2\2][\3\2\2\2^\t\3\2\2\2_`\7\30\2\2`b\5\f\7\2a_\3\2\2\2ab\3"+
+		"\2\2\2b\13\3\2\2\2cd\7\27\2\2dq\5\f\7\2ek\7\23\2\2fg\5\24\13\2gh\5\f\7"+
+		"\2hj\3\2\2\2if\3\2\2\2jm\3\2\2\2ki\3\2\2\2kl\3\2\2\2ln\3\2\2\2mk\3\2\2"+
+		"\2nq\7\24\2\2oq\t\2\2\2pc\3\2\2\2pe\3\2\2\2po\3\2\2\2q\r\3\2\2\2rs\5\b"+
+		"\5\2st\7\25\2\2tu\5\4\3\2u\17\3\2\2\2v\u0083\5\22\n\2w{\7\23\2\2xy\5\24"+
+		"\13\2yz\5\20\t\2z|\3\2\2\2{x\3\2\2\2|}\3\2\2\2}{\3\2\2\2}~\3\2\2\2~\177"+
+		"\3\2\2\2\177\u0080\7\24\2\2\u0080\u0083\3\2\2\2\u0081\u0083\t\3\2\2\u0082"+
+		"v\3\2\2\2\u0082w\3\2\2\2\u0082\u0081\3\2\2\2\u0083\21\3\2\2\2\u0084\u0085"+
+		"\7\"\2\2\u0085\u008a\7\21\2\2\u0086\u0087\7\26\2\2\u0087\u0089\7\"\2\2"+
+		"\u0088\u0086\3\2\2\2\u0089\u008c\3\2\2\2\u008a\u0088\3\2\2\2\u008a\u008b"+
+		"\3\2\2\2\u008b\u008d\3\2\2\2\u008c\u008a\3\2\2\2\u008d\u008e\7\22\2\2"+
+		"\u008e\23\3\2\2\2\u008f\u0090\7\"\2\2\u0090\u0092\7\25\2\2\u0091\u008f"+
+		"\3\2\2\2\u0091\u0092\3\2\2\2\u0092\25\3\2\2\2\169GMW]akp}\u0082\u008a"+
+		"\u0091";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

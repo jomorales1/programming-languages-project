@@ -1,9 +1,9 @@
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+
 import java.io.IOException;
-import gen.picalcLexer;
-import gen.picalcParser;
-import static  org.antlr.v4.runtime.CharStreams.fromFileName;
+
+import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Launch {
     public static void main(String[] args) {
