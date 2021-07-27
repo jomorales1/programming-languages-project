@@ -44,13 +44,12 @@ abs
 
 val
         :   path
-        |   OSB (label val)* CSB
-        |   OSB (ID)* CSB
+        |   OSB ((label val)* | (ID)*) CSB
         |   (BOOL | CHAR | INT | STRING)
         ;
 
 path
-        :   ID OB (DOT ID)* CB
+        :   ID (DOT ID)*
         ;
 
 label

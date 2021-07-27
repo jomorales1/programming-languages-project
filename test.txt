@@ -1,1 +1,1 @@
-run(new a:[Char] () )
+run(new a:[b = Char c = String d = Int Boolean] ())
