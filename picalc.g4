@@ -4,13 +4,14 @@ program :
         ;
 
 proc
-        :   val OUTPUT val                          // Output atom
-        |   val INPUT abs                           // Input prefix
-        |   val RINPUT abs                          // Replicated input prefix
+        :   (val | ID) OUTPUT (val | ID)            // Output atom
+        |   (val | ID) INPUT (abs | ID)             // Input prefix
+        |   (val | ID) RINPUT (abs | ID)            // Replicated input prefix
         |   OP CP                                   // Empty process
         |   OP proc PC proc CP                      // Parallel composition
         |   OP dec proc CP                          // Local declaration
         |   'if' val 'then' proc 'else' proc        // Conditional
+        |   (val | ID) INPUT ID EQ 'print' OUTPUT STRING
         ;
 
 dec
@@ -38,11 +39,13 @@ type
 
 abs
         :   pat EQ proc
+        |   OSB (ID)* CSB
         ;
 
 val
         :   path
-        |   OSB (label val)+ CSB
+        |   OSB (label val)* CSB
+        |   OSB (ID)* CSB
         |   (BOOL | CHAR | INT | STRING)
         ;
 

@@ -1,17 +1,56 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Visitors<T> extends picalcBaseVisitor<T> {
 
     // TODO: clase para procesos y clase para canales. E incluir hashmaps con referencias a esos objetos
 
     // Jorge
+
+
+    class Process {
+        String name;
+        Integer status;
+        Runnable target;
+
+        Process (Runnable target) {
+            this.status = 0;
+            this.target = target;
+        }
+
+        public void run() {
+            Thread thread = new Thread(this.target);
+            this.status = 1;
+            thread.start();
+        }
+
+        public void setN(String name) {
+            this.name = name;
+        }
+
+        public Integer getStatus() {
+            return status;
+        }
+    }
+
+    private HashMap<String, Process> threads;
+    private HashMap<String, Channel> channels;
+
+    public Visitors() {
+        super();
+        this.threads = new HashMap<>();
+    }
+
+    // Hacer uso del HashMap de procesos (threads)Lanzar la ejecucion del hilo (execute)
     @Override public T visitProgram(picalcParser.ProgramContext ctx) {
         System.out.println("program first rule");
         visitProc(ctx.proc());
+        String name = "a";
+        this.threads.get(name).run();
         return null;
     }
 
-
+    // Creacion de canales -> almacenarlos en el mapa processes
     @Override public T visitProc(picalcParser.ProcContext ctx) {
         if (ctx.val().size() == 2 && ctx.getText().contains("!")) {
             System.out.println("proc first rule");
@@ -48,14 +87,16 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
 
 
     //Sebastian
+    // Retornar en una lista los argumentos de la declaracion -> definir el formato de lo envia
     @Override public T visitDec(picalcParser.DecContext ctx) {
         int a = 10;
-        String p = "3 + 1 | 2 + 2";
-        Thread thread = new Thread(() -> {
-            System.out.println("Hello World");
+
+        Process p1 = new Process(() -> {
+            System.out.println("Hello World! I hate Pict!");
             System.out.println(a + 1);
         });
-        thread.start();
+        this.threads.put("name", p1);
+        p1.run();
         if (ctx.getText().charAt(0) == 'n'){
             System.out.println("DEC Rule one");
             String line = ctx.getText();
@@ -106,6 +147,7 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
         if (ctx.type() != null) {
             System.out.println("otype first rule");
             ArrayList<T> args = (ArrayList<T>) visitType(ctx.type());
+            return (T) args;
         }
         return null;
     }
