@@ -1,32 +1,35 @@
 import javafx.util.Pair;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class Visitors<T> extends picalcBaseVisitor<T> {
 
-    // TODO: clase para procesos y clase para canales. E incluir hashmaps con referencias a esos objetos
-
-    // Jorge
-
-
-    class Process {
+    static class Process {
         String name;
         Integer status;
-        Runnable target;
+        ArrayList<Runnable> targets;
         ArrayList<Pair<String, Parameter>> args;
 
-        Process (Runnable target) {
+        Process (String name) {
+            this.name = name;
             this.status = 0;
-            this.target = target;
+            this.targets = new ArrayList<>();
             this.args = new ArrayList<>();
         }
 
+        public void addTarget(Runnable target) {
+            this.targets.add(target);
+        }
+
         public void run() {
-            Thread thread = new Thread(this.target);
             this.status = 1;
-            thread.start();
+            for (Runnable runnable : this.targets) {
+                Thread thread = new Thread(runnable);
+                thread.start();
+            }
+            this.status = 2;
         }
 
         public void setName(String name) {
@@ -42,13 +45,15 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
         }
     }
 
-    private HashMap<String, Process> threads;
-    private HashMap<String, Channel> channels;
-    private HashMap<String, ArrayList<Object>> types;
+    private final HashMap<String, Process> threads;
+    private final HashMap<String, Channel> channels;
+    private final HashMap<String, Parameter> types;
 
     public Visitors() {
         super();
         this.threads = new HashMap<>();
+        this.channels = new HashMap<>();
+        this.types = new HashMap<>();
     }
 
     public Parameter recognizeElementType(Object element) {
@@ -61,102 +66,177 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
     }
 
     public void createProcess(String id, ArrayList<Parameter> elements) {
-        Process process = new Process(() -> {
-            System.out.println("Semantica");
-        });
-        process.setName(id);
+        if (this.threads.containsKey(id)) {
+            throw new RuntimeException();
+        }
+        Process process = new Process(id);
         for (int l = 0; l < elements.get(0).getSize(); l += 2) {
             process.addArgument(new Pair<>(
                     elements.get(0).getParameter(l).getStr(),
                     elements.get(0).getParameter(l + 1))
             );
         }
+        Parameter instructions = elements.get(1);
+        for (int i = 0; i < instructions.getSize(); i += 3) {
+            int finalI = i;
+            process.addTarget(() -> {
+                String n1 = instructions.getParameter(finalI).getStr();
+                String n2 = instructions.getParameter(finalI + 2).getStr();
+                if (!instructions.getParameter(finalI + 1).getStr().equals("print")) {
+                    if (!channels.containsKey(n1) || !channels.containsKey(n2)) {
+                        System.out.println("Error");
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                switch (instructions.getParameter(finalI + 1).getStr()) {
+                    case "!":
+                        try {
+                            channels.get(n1).write(channels.get(n2).read());
+                        } catch (Channel.WriteException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "?":
+                        try {
+                            int mseconds = 0;
+                            while (channels.get(n1).isEmpty()) {
+                                TimeUnit.MILLISECONDS.sleep(1);
+                                mseconds++;
+                                if (mseconds > 1000) {
+                                    break;
+                                }
+                            }
+                            if (mseconds <= 1000) {
+                                channels.get(n2).write(channels.get(n1).read());
+                            }
+                        } catch (Channel.WriteException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "?*":
+                        try {
+                            for (int j = 0; j < 10; j++) {
+                                channels.get(n2).write(channels.get(n1).read());
+                                TimeUnit.MILLISECONDS.sleep(100);
+                            }
+                        } catch (Channel.WriteException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "print":
+                        System.out.println(n2);
+                        break;
+                }
+            });
+        }
         this.threads.put(id, process);
+    }
+
+    @Override public T visitBlock(picalcParser.BlockContext ctx) {
+        int index = 0, program = 0, dec = 0;
+        while (!(ctx.getChild(index) instanceof picalcParser.ProgramContext) ||
+                !(ctx.getChild(index) instanceof picalcParser.DecContext)) {
+            if (ctx.getChild(index) instanceof picalcParser.ProgramContext) {
+                visitProgram(ctx.program(program++));
+            } else if (ctx.getChild(index) instanceof picalcParser.DecContext) {
+                visitDec(ctx.dec(dec++));
+            }
+            index++;
+        }
+        return null;
     }
 
     // Hacer uso del HashMap de procesos (threads)Lanzar la ejecucion del hilo (execute)
     @Override public T visitProgram(picalcParser.ProgramContext ctx) {
         System.out.println("program first rule");
-        visitProc(ctx.proc());
-        String name = "name";
+        ArrayList<Parameter> list = (ArrayList<Parameter>) visitProc(ctx.proc());
+        String name = list.get(0).getStr();
         this.threads.get(name).run();
         return null;
     }
 
-    // Creacion de canales -> almacenarlos en el mapa processes
+    // Returns
     @Override public T visitProc(picalcParser.ProcContext ctx) {
-        if (ctx.val().size() == 2 && ctx.getText().contains("!")) {
+        if (ctx.ID().size() == 2 && ctx.getText().contains("!")) {
             System.out.println("proc first rule");
-            visitVal(ctx.val(0));
-            visitVal(ctx.val(1));
-        } else if (ctx.val() != null && ctx.abs() != null) {
+            ArrayList<Parameter> args = new ArrayList<>();
+            args.add(new Parameter(ctx.ID(0).getText()));
+            args.add(new Parameter("!"));
+            args.add(new Parameter(ctx.ID(1).getText()));
+            return (T) args;
+        } else if (ctx.ID().size() == 2 && ctx.getText().contains("?")) {
+            ArrayList<Parameter> args = new ArrayList<>();
+            args.add(new Parameter(ctx.ID(0).getText()));
             if (ctx.RINPUT() != null) {
                 System.out.println("proc third rule");
-                visitVal(ctx.val(0));
-                visitAbs(ctx.abs());
+                args.add(new Parameter("?*"));
             } else if (ctx.INPUT() != null) {
                 System.out.println("proc second rule");
-                visitVal(ctx.val(0));
-                visitAbs(ctx.abs());
+                args.add(new Parameter("?"));
             }
+            args.add(new Parameter(ctx.ID(1).getText()));
+            return (T) args;
         } else if (ctx.getText().equals("()")) {
             System.out.println("proc fourth rule");
         } else if (ctx.proc().size() == 2 && ctx.PC() != null) {
             System.out.println("proc fifth rule");
-            visitProc(ctx.proc(0));
-            visitProc(ctx.proc(1));
+            ArrayList<Parameter> processes = new ArrayList<>();
+            processes.add(recognizeElementType(visitProc(ctx.proc(0))));
+            processes.add(recognizeElementType(visitProc(ctx.proc(1))));
+            return (T) processes;
         } else if (ctx.dec() != null) {
-            System.out.println("proc sixth rule");
-            visitDec(ctx.dec());
-            visitProc(ctx.proc(0));
+            ArrayList<Parameter> list = new ArrayList<>();
+            list.add(recognizeElementType(visitDec(ctx.dec())));
+            list.add(recognizeElementType(visitProc(ctx.proc(0))));
+            return (T) list;
         } else if (ctx.getChild(0).getText().equals("if")) {
             System.out.println("proc seventh rule");
             visitVal(ctx.val(0));
             visitProc(ctx.proc(0));
             visitProc(ctx.proc(1));
+        } else if (ctx.getText().contains("print")) {
+            ArrayList<Parameter> args = new ArrayList<>();
+            args.add(new Parameter(ctx.ID(0).getText()));
+            args.add(new Parameter(ctx.STRING().getText()));
         }
         return null;
     }
 
-    //Sebastian
-    // Retornar en una lista los argumentos de la declaracion -> definir el formato de lo envia
+    // Creates processes, channels and types
     @Override public T visitDec(picalcParser.DecContext ctx) {
-        int a = 10;
-        Process p1 = new Process(() -> {
-            System.out.println("Hello World! I hate Pict!");
-            System.out.println(a + 1);
-        });
-        this.threads.put("name", p1);
         if (ctx.getText().charAt(0) == 'n') {
-            System.out.println("DEC Rule one");
+            System.out.println("dec first rule");
             String name = ctx.ID(0).getText();
+            if (this.channels.containsKey(name)) {
+                throw new RuntimeException();
+            }
             Object element = visitType(ctx.type());
             if (element instanceof String) {
                 ArrayList<Parameter> parameters = new ArrayList<>();
                 parameters.add(recognizeElementType(element));
-                Channel channel = new Channel(0, parameters);
+                Channel channel = new Channel(name, 0, parameters);
                 this.channels.put(name, channel);
             } else {
                 ArrayList<Parameter> parameters = (ArrayList<Parameter>) element;
                 int type = (parameters.get(0).getStr().equals("I/O") ? 0 : 1);
-                Channel channel = new Channel(type, parameters);
+                Channel channel = new Channel(name, type, parameters);
                 this.channels.put(name, channel);
             }
         } else if (ctx.getText().charAt(0) == 'd') {
-            System.out.println("DEC Rule two");
+            System.out.println("dec second rule");
             String id = ctx.ID(0).getText();
-            System.out.println(id);
             createProcess(id, (ArrayList<Parameter>) visitAbs(ctx.abs(0)));
             for (int i = 1; i < ctx.abs().size(); i++) {
-                System.out.println(ctx.ID(i).getText());
-                visitAbs(ctx.abs(i));
+                String id1 = ctx.ID(i).getText();
+                createProcess(id1, (ArrayList<Parameter>) visitAbs(ctx.abs(i)));
             }
         } else if (ctx.getText().charAt(0) == 't') {
-            System.out.println("DEC Rule three");
-            String line = ctx.getText();
+            System.out.println("dec third rule");
             String id = ctx.ID(0).getText();
-            System.out.println(id);
-            visitType(ctx.type());
+            if (this.types.containsKey(id)) {
+                throw new RuntimeException();
+            }
+            this.types.put(id, recognizeElementType(visitType(ctx.type())));
         }
         return null;
     }

@@ -1,2 +1,3 @@
-run(new a:[b = Char c = String d = Int Boolean] ())
-(c![] | c?x = print!"")
+def tt[c:[]] = c:ˆ[] (c![] | c?x=print!"done!")
+new c:[]
+run (tt![c])

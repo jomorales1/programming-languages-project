@@ -2,24 +2,25 @@ import java.util.ArrayList;
 
 public class Channel {
 
-    int transfer = 0;        //0 envia señal, 1 envia/recibe señal
+    private final Integer type;
+    private final String name;
     ArrayList<SubChannel> subChannels;
 
-    class WriteException extends Exception {
+    static class WriteException extends Exception {
         WriteException(String message) {
             super(message);
         }
     }
 
-    class SubChannel<T> {
+    static class SubChannel {
         final String id;
         final String type;
-        T value;
+        String value;
 
         SubChannel(String id, String type) {
             this.id = id;
             this.type = type;
-            this.value = null;
+            this.value = "";
         }
 
         public String getId() {
@@ -30,21 +31,22 @@ public class Channel {
             return type;
         }
 
-        public T getValue() {
+        public String getValue() {
             return value;
         }
 
-        public void setValue(T value) {
+        public void setValue(String value) {
             this.value = value;
         }
     }
 
-    Channel (int type, ArrayList<Parameter> parameters) {
+    Channel (String name, int type, ArrayList<Parameter> parameters) {
         assert type >= 0 && type < 2;
-        this.transfer = type;
+        this.type = type;
+        this.name = name;
         this.subChannels = new ArrayList<>();
         if (parameters.size() == 0) {
-            SubChannel<String> subChannel = new SubChannel<>(null, "String");
+            SubChannel subChannel = new SubChannel(null, "String");
             this.subChannels.add(subChannel);
         } else if (parameters.size() == 1) {
             String first = parameters.get(0).getStr();
@@ -52,7 +54,7 @@ public class Channel {
             if (!first.equals("I/O")) {
                 scType = first;
             }
-            SubChannel<String> subChannel = new SubChannel<>(null, scType);
+            SubChannel subChannel = new SubChannel(null, scType);
             this.subChannels.add(subChannel);
         } else {
             int start = 0;
@@ -62,36 +64,40 @@ public class Channel {
             for (int i = start; i < parameters.size(); i += 2) {
                 String id = parameters.get(i).getStr();
                 String scType = parameters.get(i + 1).getStr();
-                if (scType.equals("Int")) {
-                    SubChannel<Integer> subChannel = new SubChannel<>(id, scType);
-                    this.subChannels.add(subChannel);
-                    continue;
-                }
-                if (scType.equals("Boolean")) {
-                    SubChannel<Boolean> subChannel = new SubChannel<>(id, scType);
-                    this.subChannels.add(subChannel);
-                    continue;
-                }
-                if (scType.equals("Char")) {
-                    SubChannel<Character> subChannel = new SubChannel<>(id, scType);
-                    this.subChannels.add(subChannel);
-                    continue;
-                }
-                if (scType.equals("String")) {
-                    SubChannel<String> subChannel = new SubChannel<>(id, scType);
-                    this.subChannels.add(subChannel);
-                }
+                SubChannel subChannel = new SubChannel(id, scType);
+                this.subChannels.add(subChannel);
             }
         }
     }
 
-    public void write(int type, Parameter param) throws WriteException {
-        if (type == 0) {
+    public void write(ArrayList<String> values) throws WriteException {
+        if (this.type == 0) {
             throw new WriteException("Cannot write on this channel");
+        }
+        if (values.size() != this.subChannels.size()) {
+            throw new WriteException("Invalid number of arguments (" + this.subChannels.size() + " required)");
+        }
+        for (int i = 0; i < this.subChannels.size(); i++) {
+            System.out.println("Writing on channel " + this.name + " [" + values.get(i) + "]");
+            this.subChannels.get(i).setValue(values.get(i));
         }
     }
 
-    public String read(int type) {
-        throw new UnsupportedOperationException();
+    public ArrayList<String> read() {
+        ArrayList<String> response = new ArrayList<>();
+        for (SubChannel subChannel : this.subChannels) {
+            response.add(subChannel.getValue());
+            subChannel.setValue("");
+        }
+        return response;
+    }
+
+    public boolean isEmpty() {
+        for (SubChannel subChannel : this.subChannels) {
+            if (!subChannel.getValue().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

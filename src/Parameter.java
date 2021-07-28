@@ -23,7 +23,7 @@ public class Parameter {
 
     public Parameter getParameter(int index) {
         if (index < 0 || index >  this.parameters.size()) {
-            throw new ArrayIndexOutOfBoundsException("Dumb!");
+            throw new ArrayIndexOutOfBoundsException("Invalid index!");
         }
         return this.parameters.get(index);
     }

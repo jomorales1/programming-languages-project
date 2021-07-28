@@ -1,4 +1,8 @@
 grammar picalc;
+block
+        :   (program | dec)* EOF
+        ;
+
 program :
             'run' proc                          //Programs
         ;
@@ -72,7 +76,7 @@ OUTPUT: '!';
 INPUT: '?';
 RINPUT: '?*';
 BOOL : ('True' | 'False');
-CHAR : '\''[a-zA-Z0-9_]'\'';                //fix
+CHAR : '\''[a-zA-Z0-9_]'\'';
 INT : [0-9]+;
 STRING: '"'~["\\\r\n]*'"';
 ID : [a-zA-Z][a-zA-Z0-9_]*;

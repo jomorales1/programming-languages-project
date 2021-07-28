@@ -7,6 +7,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface picalcListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link picalcParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlock(picalcParser.BlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link picalcParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlock(picalcParser.BlockContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link picalcParser#program}.
 	 * @param ctx the parse tree
 	 */

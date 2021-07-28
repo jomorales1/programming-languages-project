@@ -17,7 +17,7 @@ public class Launch {
 
             // run any rule
             //ParseTree tree = parser.program();
-            picalcParser.ProgramContext tree = parser.program();
+            picalcParser.BlockContext tree = parser.block();
 
             Visitors visitor = new Visitors();
             visitor.visit(tree);
