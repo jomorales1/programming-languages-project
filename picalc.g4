@@ -16,14 +16,14 @@ proc
 
 dec
         :   'new' ID CL type
-        |   'def' ID abs ('and' ID abs)+
+        |   'def' ID abs ('and' ID abs)*
         |   'type' ID EQ type
         ;
 
 pat
         :   ID otype
-        |   OSB (label pat)+ CSB
-        |   US otype
+        |   OSB (label pat)* CSB
+        |   US otype                             // What is Under Score!?
         //   ID otype '@' pat                    //Destroy it
         ;
 
@@ -74,6 +74,6 @@ RINPUT: '?*';
 BOOL : ('True' | 'False');
 CHAR : '\''[a-zA-Z0-9_]'\'';                //fix
 INT : [0-9]+;
-STRING: '"'[a-zA-Z0-9 ]*'"';
+STRING: '"'~["\\\r\n]*'"';
 ID : [a-zA-Z][a-zA-Z0-9_]*;
 WS : [ \t\r\n]+ -> skip ;

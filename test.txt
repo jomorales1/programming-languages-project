@@ -1,1 +1,2 @@
 run(new a:[b = Char c = String d = Int Boolean] ())
+(c![] | c?x = print!"")

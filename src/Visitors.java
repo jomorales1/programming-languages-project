@@ -1,3 +1,5 @@
+import javafx.util.Pair;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,10 +15,12 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
         String name;
         Integer status;
         Runnable target;
+        ArrayList<Pair<String, Parameter>> args;
 
         Process (Runnable target) {
             this.status = 0;
             this.target = target;
+            this.args = new ArrayList<>();
         }
 
         public void run() {
@@ -32,6 +36,10 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
         public Integer getStatus() {
             return status;
         }
+
+        public void addArgument(Pair<String, Parameter> arg) {
+            this.args.add(arg);
+        }
     }
 
     private HashMap<String, Process> threads;
@@ -41,6 +49,29 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
     public Visitors() {
         super();
         this.threads = new HashMap<>();
+    }
+
+    public Parameter recognizeElementType(Object element) {
+        if (element instanceof String) {
+            return new Parameter((String) element);
+        }
+        Parameter parameter = new Parameter();
+        parameter.setParameters((ArrayList<Parameter>) element);
+        return parameter;
+    }
+
+    public void createProcess(String id, ArrayList<Parameter> elements) {
+        Process process = new Process(() -> {
+            System.out.println("Semantica");
+        });
+        process.setName(id);
+        for (int l = 0; l < elements.get(0).getSize(); l += 2) {
+            process.addArgument(new Pair<>(
+                    elements.get(0).getParameter(l).getStr(),
+                    elements.get(0).getParameter(l + 1))
+            );
+        }
+        this.threads.put(id, process);
     }
 
     // Hacer uso del HashMap de procesos (threads)Lanzar la ejecucion del hilo (execute)
@@ -96,21 +127,31 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
             System.out.println(a + 1);
         });
         this.threads.put("name", p1);
-        if (ctx.getText().charAt(0) == 'n'){
-            // TODO: create channel
+        if (ctx.getText().charAt(0) == 'n') {
             System.out.println("DEC Rule one");
-            ctx.ID(0).getText();
-            visitType(ctx.type());
-        }else if (ctx.getText().charAt(0) == 'd'){
+            String name = ctx.ID(0).getText();
+            Object element = visitType(ctx.type());
+            if (element instanceof String) {
+                ArrayList<Parameter> parameters = new ArrayList<>();
+                parameters.add(recognizeElementType(element));
+                Channel channel = new Channel(0, parameters);
+                this.channels.put(name, channel);
+            } else {
+                ArrayList<Parameter> parameters = (ArrayList<Parameter>) element;
+                int type = (parameters.get(0).getStr().equals("I/O") ? 0 : 1);
+                Channel channel = new Channel(type, parameters);
+                this.channels.put(name, channel);
+            }
+        } else if (ctx.getText().charAt(0) == 'd') {
             System.out.println("DEC Rule two");
             String id = ctx.ID(0).getText();
             System.out.println(id);
-            visitAbs(ctx.abs(0));
+            createProcess(id, (ArrayList<Parameter>) visitAbs(ctx.abs(0)));
             for (int i = 1; i < ctx.abs().size(); i++) {
                 System.out.println(ctx.ID(i).getText());
                 visitAbs(ctx.abs(i));
             }
-        }else if (ctx.getText().charAt(0) == 't'){
+        } else if (ctx.getText().charAt(0) == 't') {
             System.out.println("DEC Rule three");
             String line = ctx.getText();
             String id = ctx.ID(0).getText();
@@ -120,33 +161,33 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
         return null;
     }
 
+    // Returns ArrayList<Parameter>
     @Override public T visitPat(picalcParser.PatContext ctx) {
         if (ctx.ID() != null) {
             System.out.println("pat rule one");
-            ArrayList<Object> items = new ArrayList<>();
-            items.add(ctx.ID().getText());
-            items.add(visitOtype(ctx.otype()));
+            ArrayList<Parameter> items = new ArrayList<>();
+            items.add(new Parameter(ctx.ID().getText()));
+            items.add(recognizeElementType(visitOtype(ctx.otype())));
             return (T) items;
         } else if (ctx.OSB() != null) {
             System.out.println("pat rule two");
-            ArrayList<Object> items = new ArrayList<>();
+            ArrayList<Parameter> items = new ArrayList<>();
             for (int i = 0; i < ctx.label().size(); i++) {
-                items.add(visitLabel(ctx.label(i)));
-                items.add(visitPat(ctx.pat(i)));
+                items.add(new Parameter((String) visitLabel(ctx.label(i))));
+                items.add(recognizeElementType(visitPat(ctx.pat(i))));
             }
             return (T) items;
         } else if (ctx.US() != null) {
             System.out.println("pat rule three");
-            ArrayList<Object> items = new ArrayList<>();
-            items.add(ctx.US().getText());
-            items.add(visitOtype(ctx.otype()));
+            ArrayList<Parameter> items = new ArrayList<>();
+            items.add(new Parameter(ctx.US().getText()));
+            items.add(recognizeElementType(visitOtype(ctx.otype())));
             return (T) items;
         }
         return null;
     }
 
-
-    //Tovar
+    // Returns ArrayList<Parameter>
     @Override public T visitOtype(picalcParser.OtypeContext ctx) {
         if (ctx.type() != null) {
             System.out.println("otype first rule");
@@ -155,91 +196,87 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
         return null;
     }
 
+    // Returns ArrayList<Parameter> | String
     @Override public T visitType(picalcParser.TypeContext ctx) {
-        ArrayList<Object> args = new ArrayList<>();
+        ArrayList<Parameter> args = new ArrayList<>();
         if (ctx.getText().charAt(0) == '^') {
-            System.out.println("type rule first");
-            args.add("I/O");
-            args.add(visitType(ctx.type(0)));
+            System.out.println("type first rule");
+            args.add(new Parameter("I/O"));
+            args.add(recognizeElementType(visitType(ctx.type(0))));
             return (T) args;
         } else if (ctx.getText().charAt(0) == '[') {
-            System.out.println("type rule second");
-            ArrayList<Object> items = new ArrayList<>();
+            System.out.println("type second rule");
             for (int i = 0; i < ctx.label().size(); i++) {
-                String id = (String) visitLabel(ctx.label(i));
-                items.add(id);
-                System.out.println("Label [" + i + "] = " + id);
-                Object el = visitType(ctx.type(i));
-                items.add(el);
+                args.add(new Parameter((String) visitLabel(ctx.label(i))));
+                args.add(recognizeElementType(visitType(ctx.type(i))));
             }
-            return (T) items;
+            return (T) args;
         } else if (ctx.getText().charAt(0) == 'B' ||
                 ctx.getText().charAt(0) == 'C' ||
                 ctx.getText().charAt(0) == 'I' ||
                 ctx.getText().charAt(0) == 'S' ) {
-            System.out.println("type rule three");
-            ArrayList<Object> type = new ArrayList<>();
-            System.out.println(ctx.getText());
-            type.add(ctx.getText());
-            return (T) type;
+            System.out.println("type third rule");
+            return (T) ctx.getText();
         }
         return null;
     }
 
+    // Returns ArrayList<Parameter>
     @Override public T visitAbs(picalcParser.AbsContext ctx) {
         if (ctx.pat() != null) {
             System.out.println("abs first rule");
-            visitPat(ctx.pat());
-            visitProc(ctx.proc());
+            ArrayList<Parameter> args = new ArrayList<>();
+            args.add(recognizeElementType(visitPat(ctx.pat())));
+            args.add(recognizeElementType(visitProc(ctx.proc())));
+            return (T) args;
         } else if (ctx.OSB() != null) {
             System.out.println("abs second rule");
-            ArrayList<String> ids = new ArrayList<>();
+            ArrayList<Parameter> ids = new ArrayList<>();
             for (int i = 0; i < ctx.ID().size(); i++) {
-                ids.add(ctx.ID(i).getText());
+                ids.add(new Parameter(ctx.ID(i).getText()));
             }
             return (T) ids;
         }
         return null;
     }
 
-
-    //Juan
+    // Returns ArrayList<Parameter> | String
     @Override public T visitVal(picalcParser.ValContext ctx) {
         if (ctx.path() != null) {
-            System.out.println("val primera regla");
+            System.out.println("val first rule");
             return (T) visitPath(ctx.path());
         }
         else if (ctx.OSB() != null) {
-            System.out.println("val segunda regla");
-            ArrayList<Object> list = new ArrayList<>();
+            System.out.println("val second rule");
+            ArrayList<Parameter> list = new ArrayList<>();
             if (ctx.label() != null) {
                 for (int i = 0; i < ctx.val().size(); i++) {
-                    String id = (String) visitLabel(ctx.label(i));
-                    list.add(id);
-                    Object element = visitVal(ctx.val(i));
-                    list.add(element);
+                    list.add(new Parameter((String) visitLabel(ctx.label(i))));
+                    list.add(recognizeElementType(ctx.val(i)));
                 }
             } else if (ctx.ID() != null) {
                 for (int i = 0; i < ctx.ID().size(); i++) {
-                    list.add(ctx.ID(i).getText());
+                    Parameter idVal = new Parameter();
+                    idVal.setStr(ctx.ID(i).getText());
+                    list.add(idVal);
                 }
             }
             return (T) list;
         }
         else if (ctx.BOOL() != null){
-            System.out.println("Regla de bool");
+            System.out.println("val third rule -> bool");
             return (T) ctx.BOOL().getText();
         }
         else if (ctx.CHAR() != null){
-            System.out.println(("Regla de char"));
+            System.out.println(("val third rule -> char"));
             return (T) ctx.CHAR().getText();
         }
         else if (ctx.INT() != null) {
-            System.out.println("Regla de int");
+            System.out.println("val third rule -> int");
             return (T) ctx.INT().getText();
         }
         else if (ctx.STRING() != null){
-            System.out.println("Regla de String");
+            System.out.println("val third rule -> string");
             return (T) ctx.STRING().getText();
         }
         return null;
@@ -247,12 +284,16 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
 
     // Returns PATH -> ArrayList<Parameter>
     @Override public T visitPath(picalcParser.PathContext ctx) {
-        ArrayList<String> ids = new ArrayList<>();
+        ArrayList<Parameter> ids = new ArrayList<>();
         if (ctx.ID() != null) {
             System.out.println("path first rule");
-            ids.add(ctx.ID(0).getText());
+            Parameter id = new Parameter();
+            id.setStr(ctx.ID(0).getText());
+            ids.add(id);
             for (int i = 1; i < ctx.ID().size(); i++) {
-                ids.add(ctx.ID(i).getText());
+                Parameter optionalId = new Parameter();
+                optionalId.setStr(ctx.ID(i).getText());
+                ids.add(optionalId);
             }
             return (T) ids;
         }
@@ -264,7 +305,6 @@ public class Visitors<T> extends picalcBaseVisitor<T> {
     @Override public T visitLabel(picalcParser.LabelContext ctx) {
         if (ctx.ID() != null) {
             System.out.println("label first rule");
-
             return (T) ctx.ID().getText();
         }
         return null;

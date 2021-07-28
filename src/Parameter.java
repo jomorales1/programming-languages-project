@@ -8,6 +8,10 @@ public class Parameter {
         this.str = "";
         this.parameters = new ArrayList<>();
     }
+    public Parameter (String str) {
+        this.str = str;
+        this.parameters = new ArrayList<>();
+    }
 
     public String getStr() {
         return str;
@@ -26,6 +30,10 @@ public class Parameter {
 
     public void addParameter(Parameter parameter) {
         this.parameters.add(parameter);
+    }
+
+    public void setParameters(ArrayList<Parameter> parameters) {
+        this.parameters = parameters;
     }
 
     public Integer getSize() {
